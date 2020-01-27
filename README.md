@@ -9,3 +9,4 @@ Initializes the board by putting n queens on the diagonal. Moves the queen with 
 #### Useful links: 
 * https://github.com/ichko/ai/tree/master/03_n_queens
 * https://en.wikipedia.org/wiki/Min-conflicts_algorithm
+* https://github.com/kushjain/Min-Conflicts
