@@ -10,3 +10,7 @@ Initializes the board by putting n queens on the diagonal. Moves the queen with 
 * https://github.com/ichko/ai/tree/master/03_n_queens
 * https://en.wikipedia.org/wiki/Min-conflicts_algorithm
 * https://github.com/kushjain/Min-Conflicts
+
+
+#### Most likely the answer:
+https://github.com/naderAsadi/N-Queen/blob/master/min_conflict.py
