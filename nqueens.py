@@ -4,6 +4,7 @@
 # n = 700:
 #----------------------#
 
+#!/usr/bin/env pypy
 import random
 import os
 import time
