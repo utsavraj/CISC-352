@@ -2,11 +2,18 @@ import random
 import os
 import time
 
+#Generates a random n x n board
+def random_board(nr):
+  board = list(range(nr))
+  random.shuffle(board)
+  return board
+
+
 def nqueens(nr):
-  return min_conflicts(list(range(nr)), nr)
+  return min_conflicts(random_board(nr), nr)
   
-#Creates The Solution
-#Example of a board generated eg. (2, 4, 1 , 3)
+# Creates The Solution
+# Example of a board generated eg. (2, 4, 1 , 3)
 # - Q - -
 # - - - Q
 # Q - - -
@@ -20,28 +27,39 @@ def min_conflicts(soln, nr, iters=1000):
     return random.choice([i for i in range(nr) if filt(li[i])])
 
   for k in range(iters):
-    confs = find_conflicts(soln, nr)
-    if sum(confs) == 0:
+    conflicts = find_conflicts(soln, nr)
+    #If conflicts are zero, it means we are at the goal state
+    if sum(conflicts) == 0:
+      #Index of row starts from 1
       soln = [x+1 for x in soln]
       return soln
-    col = random_pos(confs, lambda elt: elt > 0)
+    
+    #Choose a random column  
+    col = random_pos(conflicts, lambda elt: elt > 0)
     vconfs = [hits(soln, nr, col, row) for row in range(nr)]
     soln[col] = random_pos(vconfs, lambda elt: elt == min(vconfs))
   raise Exception("Try more iterations.")
 
+
+
+# Returns the number of hits for queen in each column as a list
 def find_conflicts(soln, nr):
   x = [hits(soln, nr, col, soln[col]) for col in range(nr)]
   return x
 
+#Checks for number of queens attacking the queen in the given column
+# col - index of column of the queen
+# row - index of the queen's row
 def hits(soln, nr, col, row):
-  total = 0
+  conflict = 0
   for i in range(nr):
     if i == col:
       continue
+    # If the queens are in the same row/ digonal to each other 
+    # increment conflict by 1
     if soln[i] == row or abs(i - col) == abs(soln[i] - row):
-      total += 1
-  print(total, soln)
-  return total
+      conflict += 1
+  return conflict
 
 
 
