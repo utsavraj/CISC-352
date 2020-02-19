@@ -16,7 +16,12 @@ def random_board(nr):
 
 
 def nqueens(nr):
-  return min_conflicts(random_board(nr), nr)
+  if (nr == 1):
+    return [1]
+  elif (nr == 2 or nr == 3 or nr < 1):
+    return "No solution"
+  else:
+    return min_conflicts(random_board(nr), nr)
   
 # Creates The Solution
 # Example of a board generated eg. (2, 4, 1 , 3)
