@@ -2,7 +2,7 @@ import random
 import os
 import time
 
-#Generates a random n x n board
+# Generates a random n x n board
 def random_board(nr):
   board = list(range(nr))
   random.shuffle(board)
@@ -20,26 +20,34 @@ def nqueens(nr):
 # - - Q -
 # nr - size of the board
 # soln - solution index (needs to be incremented by one)
-# number of iterations before the system is stopped due to local minima
+# iters = 1000. number of iterations after which a new random board is generated. 
 
 def min_conflicts(soln, nr, iters=1000):
   def random_pos(li, filt):
     return random.choice([i for i in range(nr) if filt(li[i])])
 
-  for k in range(iters):
-    conflicts = find_conflicts(soln, nr)
-    #If conflicts are zero, it means we are at the goal state
-    if sum(conflicts) == 0:
-      #Index of row starts from 1
-      soln = [x+1 for x in soln]
-      return soln
-    
-    #Choose a random column  
-    col = random_pos(conflicts, lambda elt: elt > 0)
-    vconfs = [hits(soln, nr, col, row) for row in range(nr)]
-    soln[col] = random_pos(vconfs, lambda elt: elt == min(vconfs))
-  raise Exception("Try more iterations.")
+  while(find_conflicts(soln, nr) != 0):
+    for k in range(iters):
+      conflicts = find_conflicts(soln, nr)
+      #If conflicts are zero, it means we are at the goal state
+      if sum(conflicts) == 0:
+        #Index of row starts from 1
+        soln = [x+1 for x in soln]
+        return soln
+      
+      #Choose a random column  with conflict greater 0 as 
+      #we do not want to disturb a queen in good position
+      col = random_pos(conflicts, lambda elt: elt > 0)
 
+      #For the given random col, calculate the number of hits for moving it in each row and return it as a list named vconfs.
+      vconfs = [hits(soln, nr, col, row) for row in range(nr)]
+
+      #For the random given column, choose the row position with least conflict - choose randomly if any tie.
+      soln[col] = random_pos(vconfs, lambda elt: elt == min(vconfs))
+
+    # If stuck at a local minima after 1000 iterations, generate a new 
+    # random board  
+    soln = random_board(nr)
 
 
 # Returns the number of hits for queen in each column as a list
