@@ -14,7 +14,7 @@ def random_board(nr):
   random.shuffle(board)
   return board
 
-
+# Trivial Solution for nr = 1 and no solution for nr = 2 or 3
 def nqueens(nr):
   if (nr == 1):
     return [1]
