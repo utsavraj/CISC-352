@@ -3,15 +3,17 @@ import os
 import time
 
 def nqueens(nr):
-  return show(min_conflicts(list(range(nr)), nr), nr)
-
-def show(soln, nr):
-  solution = [0]*nr
-  for i in range(nr):
-    for col in range(nr):
-      if soln[col] == nr - 1 - i:
-        solution[col] = nr - i
-  return solution
+  return min_conflicts(list(range(nr)), nr)
+  
+#Creates The Solution
+#Example of a board generated eg. (2, 4, 1 , 3)
+# - Q - -
+# - - - Q
+# Q - - -
+# - - Q -
+# nr - size of the board
+# soln - solution index (needs to be incremented by one)
+# number of iterations before the system is stopped due to local minima
 
 def min_conflicts(soln, nr, iters=1000):
   def random_pos(li, filt):
@@ -20,6 +22,7 @@ def min_conflicts(soln, nr, iters=1000):
   for k in range(iters):
     confs = find_conflicts(soln, nr)
     if sum(confs) == 0:
+      soln = [x+1 for x in soln]
       return soln
     col = random_pos(confs, lambda elt: elt > 0)
     vconfs = [hits(soln, nr, col, row) for row in range(nr)]
@@ -27,7 +30,8 @@ def min_conflicts(soln, nr, iters=1000):
   raise Exception("Try more iterations.")
 
 def find_conflicts(soln, nr):
-  return [hits(soln, nr, col, soln[col]) for col in range(nr)]
+  x = [hits(soln, nr, col, soln[col]) for col in range(nr)]
+  return x
 
 def hits(soln, nr, col, row):
   total = 0
@@ -36,6 +40,7 @@ def hits(soln, nr, col, row):
       continue
     if soln[i] == row or abs(i - col) == abs(soln[i] - row):
       total += 1
+  print(total, soln)
   return total
 
 
@@ -45,7 +50,7 @@ def nqueens_sol(queens, nqueens_out):
   #-----#
   start_time = time.time()
   #-----#
-  
+
   nqueens_out.write(str(nqueens(int(queens))))
   nqueens_out.write("\n")
 
@@ -64,7 +69,6 @@ def main():
     os.remove("nqueens_out.txt")
 
   nqueens_out = open("nqueens_out.txt", "a")
-
   for line in f:
     nqueens_sol(line, nqueens_out)
 
