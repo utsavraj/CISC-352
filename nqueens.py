@@ -1,3 +1,8 @@
+#-///-RUNNING TIME-///-#
+# n = 400: 151s
+# n = 500: 232s
+#----------------------#
+
 import random
 import os
 import time
