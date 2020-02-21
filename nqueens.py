@@ -1,117 +1,194 @@
-#-///-RUNNING TIME-///-#
-# n = 400: 151s
-# n = 500: 232s
-# n = 700:
-#----------------------#
-
-#!/usr/bin/env pypy
 import random
-import os
 import time
+from datetime import timedelta
 
-# Generates a random n x n board
-def random_board(nr):
-  board = list(range(nr))
-  random.shuffle(board)
-  return board
+#An Object Oriented Approach to the NQueens Problem
+#CISC 352, Queen's University Winter 2020
 
-# Trivial Solution for nr = 1 and no solution for nr = 2 or 3
-def nqueens(nr):
-  if (nr == 1):
-    return [1]
-  elif (nr == 2 or nr == 3 or nr < 1):
-    return "No solution"
-  else:
-    return min_conflicts(random_board(nr), nr)
-  
-# Creates The Solution
-# Example of a board generated eg. (2, 4, 1 , 3)
-# - Q - -
-# - - - Q
-# Q - - -
-# - - Q -
-# nr - size of the board
-# soln - solution index (needs to be incremented by one)
-# iters = 1000. number of iterations after which a new random board is generated. 
+class nQueens:
 
-def min_conflicts(soln, nr, iters=1000):
-  def random_pos(li, filt):
-    return random.choice([i for i in range(nr) if filt(li[i])])
+    #Initialize the board
 
-  while(find_conflicts(soln, nr) != 0):
-    for k in range(iters):
-      conflicts = find_conflicts(soln, nr)
-      #If conflicts are zero, it means we are at the goal state
-      if sum(conflicts) == 0:
-        #Index of row starts from 1
-        soln = [x+1 for x in soln]
-        return soln
-      
-      #Choose a random column  with conflict greater 0 as 
-      #we do not want to disturb a queen in good position
-      col = random_pos(conflicts, lambda elt: elt > 0)
+    def __init__(self, size):
+        self.board=[None]*size
+        self.rows=[i for i in range (size)]
+        random.shuffle(self.rows)
+        self.rowConf=[0]*size
+        self.lDiagConf=[0]*(2*size-1)
+        self.rDiagConf=[0]*(2*size-1)
+        self.confRemain=0
+        self.iterations=size*2
+        self.resets=0
+        self.start(size)
+        self.solve(size)
 
-      #For the given random col, calculate the number of hits for moving it in each row and return it as a list named vconfs.
-      vconfs = [hits(soln, nr, col, row) for row in range(nr)]
+    def start(self, size):
+        for col in range(size):#i represents the ith column on the board
+            if col==0:
+                row=random.randint(0,size-1)#Generate a random int to place queen in rth row
+                self.board[col]=row+1
+                self.evalConf(row, col, size) #evaluate how many conflicts the queen has generated
+            else:
+                x=self.colConf(col,size)
+                self.confRemain==x
 
-      #For the random given column, choose the row position with least conflict - choose randomly if any tie.
-      soln[col] = random_pos(vconfs, lambda elt: elt == min(vconfs))
+    def evalConf(self, row, col, size):
+        if (row-col)>=0:
+            leftDiag=row-col
+        else:
+            leftDiag=(row-col)+(2*size-1)
+        rightDiag=row+col
+        numConf=self.rowConf[row]+self.lDiagConf[leftDiag]+self.rDiagConf[rightDiag]
+        return numConf
 
-    # If stuck at a local minima after 1000 iterations, generate a new 
-    # random board  
-    soln = random_board(nr)
+    def solveConfUpdate(self, nRow, col, size):
+        if (nRow-col)>=0:
+            leftDiag=nRow-col
+        else:
+            leftDiag=(nRow-col)+(2*size-1)
+        self.rowConf[nRow]+=1
+        self.lDiagConf[leftDiag]+=1
+        self.rDiagConf[nRow+col]+=1
 
+    def conflictUpdate(self, row, col, size):
+        if (row-col)>=0:
+            leftDiag=row-col
+        else:
+            leftDiag=(row-col)+(2*size-1)
+        self.rowConf[row]+=1
+        self.lDiagConf[leftDiag]+=1
+        self.rDiagConf[row+col]+=1
+        self.rows.remove(row)
+                    
+    def colConf(self, col, size):
+        confOne=[]
+        confTwo=[]
+        for row in self.rows:
+            numConf=self.evalConf(row, col, size)
+            if numConf==0:
+                self.board[col]=row+1
+                self.conflictUpdate(row,col,size)
+                return 0
+            if numConf==1:
+                confOne.append(row)
+            if numConf==2:
+                confTwo.append(row)
+        if len(confOne)==0:
+            rVal=random.choice(confTwo)
+            self.board[col]=rVal+1
+            self.conflictUpdate(rVal, col, size)
+            return 2
+        rVal=random.choice(confOne)
+        self.board[col]=rVal+1
+        self.conflictUpdate(rVal, col, size)
+        return 1
 
-# Returns the number of hits for queen in each column as a list
-def find_conflicts(soln, nr):
-  x = [hits(soln, nr, col, soln[col]) for col in range(nr)]
-  return x
+    def delQueen(self, oRow, col, size):
+        if (oRow-col)>=0:
+            lDiag=oRow-col
+        else:
+            lDiag=(oRow-col)+(2*size-1)
+        self.lDiagConf[lDiag]-=1
+        self.rDiagConf[rDiag]-=1
+        self.rowConf[oRow]-=1
+        if self.rowConf[oRow]==0:
+            self.rows.append(oRow)
 
-#Checks for number of queens attacking the queen in the given column
-# col - index of column of the queen
-# row - index of the queen's row
-def hits(soln, nr, col, row):
-  conflict = 0
-  for i in range(nr):
-    if i == col:
-      continue
-    # If the queens are in the same row/ digonal to each other 
-    # increment conflict by 1
-    if soln[i] == row or abs(i - col) == abs(soln[i] - row):
-      conflict += 1
-  return conflict
+    def restart(self, size):
+        self.board=[None]*size
+        self.rows=[i for i in range (size)]
+        random.shuffle(self.emptyRows)
+        self.rowConf=[0]*size
+        self.lDiagConf=[0]*(2*size-1)
+        self.rDiagConf=[0]*(2*size-1)
+        self.confRemain=0
+        self.iterations=size*2
+        self.start(size)
+        self.solve(size)
 
+    def solve (self, size):
+        for i in range(self.iterations):
+            
+            if self.confRemain==0:
+                return#Solution Found!
+            else:
+                randCol=random.randint(0,size-1) #look at a random col with 1 or more conflicts
+                oRow=self.board(randCol)
+                oRow-=1
+                numConf= self.evalConf(oRow,randCol, size)-3
+                while numConf <1:
+                    randCol=random.randint(0,size-1)
+                    oRow=self.board(randCol)
+                    oRow-=1
+                    numConf= self.evalConf(oRow,randCol, size)-3
 
+                conflictsUpdated=False
+                for newRow in self.rows:
+                    numConf=self.calcConf(newRow, randCol, size)
+                    if numConf==0:
+                        self.board[randCol]=newRow+1
+                        self.confRemain-=(self.evalConf(newRow, randCol, size)-3)
+                        self.conflictUpdate(newRow, randCol, size)
+                        self.delQueen(oRow, randCol, size)
+                        conflictsUpdated=True
+                        break
 
-#Function that writes the answer to the output file
-def nqueens_sol(queens, nqueens_out):
-  #-----#
-  start_time = time.time()
-  #-----#
+                if conflicsUpdated==False:
+                    confTwo=[]
+                    randRow=random.randint(0,size-1)
+                    numConf=self.calcConf(randRow, randCol, size)
+                    count=0
+                    while numConf!=1:
+                        randRow=random.randint(0,size-1)
+                        numConf=self.calcConf(randRow, randCol, size)
+                        if numConflicts==2:
+                            confTwo.append(randRow)
+                        Counter+=1
+                        if counter == int(size/3):
+                            break
+                    if numConf==1:
 
-  nqueens_out.write(str(nqueens(int(queens))))
-  nqueens_out.write("\n")
-
-  #-----#
-  print("--- %s seconds ---" % (time.time() - start_time))
-  #-----#
-
+                        self.board[randCol] = randRow + 1
+                        self.confRemain -= ((self.calcConf(oRow, randCol, n) - 3) - numConf)
+                        self.solveConfUpdate(randRow,randCol,size)
+                        self.delQueen(oRow, randCol, size)
+                    else:
+                        if len(confTwo)>0:
+                            randRow=random.choice(confTwo)
+                            self.board[randCol] = randRow + 1
+                            self.confRemain -= ((self.calcConf(oRow, randCol, size) - 3) - numConf)
+                            self.solveConfUpdate(randRow,randCol,size)
+                            self.delQueen(oRow, randCol, size)
+                        else:
+                            while numConf > (self.calcConf(oRow, randCol, n) - 3):
+                                randRow=random.randint(0, n - 1)
+                                numConf=calcConf(oRow, randCol, size)
+                            self.board[randCol] = randRow + 1
+                            self.confRemain -= ((self.calcConf(oRow, randCol, n) - 3) - numConf)
+                            self.solveConfUpdate(randRow,randCol,size)
+                            self.delQueen(oRow, randCol, size)
+        self.resets+= 1
+        print("restarting")
+        self.restart(n)
 
 def main():
-  #reads the input file
-  f = open("nqueens.txt", "r")
-  
-  #deletes any pre-existing output file 
-  #so answer is not appended to an existing file
-  if os.path.exists("nqueens_out.txt"):
-    os.remove("nqueens_out.txt")
-
-  nqueens_out = open("nqueens_out.txt", "a")
-  for line in f:
-    nqueens_sol(line, nqueens_out)
-
-  nqueens_out.close()
-  f.close()
-
-if __name__ == '__main__':
-  main()
+    input = open("nqueens.txt")
+    output = open("nqueens_out.txt", "w")
+    lines = input.readlines()
+    lines = [x.strip() for x in lines]
+    lines = [int(i) for i in lines]
+    for n in lines:
+        print("Board size:\t\t"+str(n))
+        start=time.time()
+        board = nQueens(n)
+        timeTaken=time.time()-start
+        print("Solution Found in:\t\t"+str(timedelta(seconds=timeTaken)))
+        #print("Remaining Conflicts: "+str(board.confRemain))
+        print(board.board)
+        print("Required # of Resets: "+str(board.resets))
+        print("---")
+                
+        output.write(str(board.board) + "\n")
+main()   
+        
+        
