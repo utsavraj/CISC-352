@@ -158,7 +158,7 @@ def getMatrix(queen, mainList, N, originalColumn):
 
 
 # -----------getConflicts----------- #
-# Returns: Calculates all the conflict for a given Queen
+# Returns: Calculates all/total number of conflicts for a given Queen
 # ---------------------------------- #
 
 def getConflicts(queen, mainList, N):
