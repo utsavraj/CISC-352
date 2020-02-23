@@ -213,13 +213,17 @@ def leftDiagonalConflicts(queen, mainList, N):
     column = current[row]
     leftDiagonalCounter = mainList[2]
     leftDiagonalIndex = (N-1) - (row - (column-1) )
-    leftDiagonalConflicts = leftDiagonalCounter[leftDiagonalIndex] 
+    leftDiagonalConflicts = leftDiagonalCounter[leftDiagonalIndex] # Do not count the current queen as a conflict
     return leftDiagonalConflicts 
 
 # -----------rightDiagonalConflicts----------- #
 # Returns: For a given queen, calculates all its right Diagonal Conflicts.
 # Based on: https://towardsdatascience.com/computing-number-of-conflicting-pairs-in-a-n-queen-board-in-linear-time-and-space-complexity-e9554c0e0645
-# Right Diagonal Refers to:
+# Right Diagonal Refers to (examplw for a 4 sized board) :
+#
+#
+#
+#
 # -------------------------------------------- #
 def rightDiagonalConflicts(queen, mainList):
     current = mainList[0]
@@ -227,7 +231,7 @@ def rightDiagonalConflicts(queen, mainList):
     column = current[row]
     rightDiagonalCounter = mainList[3]
     rightDiagonalIndex = (row + (column - 1)) 
-    rightDiagonalConflicts = rightDiagonalCounter[rightDiagonalIndex] 
+    rightDiagonalConflicts = rightDiagonalCounter[rightDiagonalIndex] # Do not count the current queen as a conflict
     return rightDiagonalConflicts 
 
 
