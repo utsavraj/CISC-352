@@ -44,7 +44,7 @@ def init(mainList, N):
     return mainList
  
 # -----------getBestColumn----------- #
-
+# Returns:
 # ----------------------------------- #
 def getBestColumn(queen, mainList, N):
     originalColumn = int(mainList[0][queen])
@@ -63,7 +63,7 @@ def getBestColumn(queen, mainList, N):
 
 
 # -----------updateConflicts----------- #
-
+# Returns:
 # ------------------------------------- #
 
 def updateConflicts(mainList, row, newColumn, oldColumn, N):
@@ -87,7 +87,7 @@ def updateConflicts(mainList, row, newColumn, oldColumn, N):
 	
 
 # -----------checkEmptyColumns----------- #
-
+# Returns:
 # --------------------------------------- #
 
 def checkEmptyColumns(queen, mainList, N, originalColumn):
@@ -110,7 +110,7 @@ def checkEmptyColumns(queen, mainList, N, originalColumn):
     return -1
 
 # -----------randomColumnChecker----------- #
-
+# Returns:
 # ----------------------------------------- #
 def randomColumnChecker(queen, mainList, N, originalColumn):
     initMatrix = mainList[0]
@@ -136,7 +136,7 @@ def randomColumnChecker(queen, mainList, N, originalColumn):
     return -1
 
 # -----------getMatrix----------- #
-
+# Returns:
 # ------------------------------- #
 
 def getMatrix(queen, mainList, N, originalColumn):
@@ -158,7 +158,7 @@ def getMatrix(queen, mainList, N, originalColumn):
 
 
 # -----------getConflicts----------- #
-
+# Returns:
 # ---------------------------------- #
 
 def getConflicts(queen, mainList, N):
@@ -175,7 +175,7 @@ def getConflicts(queen, mainList, N):
 
 
 # -----------constraints----------- #
-
+# Returns:
 # --------------------------------- #
 
 def constraints(mainList):
@@ -203,7 +203,7 @@ def constraints(mainList):
 
 
 # -----------leftDiagonalConflicts----------- #
-
+# Returns:
 # ------------------------------------------- #
 def leftDiagonalConflicts(queen, mainList, N):
     current = mainList[0]
@@ -215,7 +215,7 @@ def leftDiagonalConflicts(queen, mainList, N):
     return leftDiagonalConflicts 
 
 # -----------rightDiagonalConflicts----------- #
-
+# Returns:
 # -------------------------------------------- #
 def rightDiagonalConflicts(queen, mainList):
     current = mainList[0]
@@ -228,7 +228,7 @@ def rightDiagonalConflicts(queen, mainList):
 
 
 # -----------legalMove----------- #
-
+# Returns:
 # ------------------------------- #
 def legalMove(queenToRepair, queensMoved, potentialColumn, mainList, N):
     current = mainList[0]
@@ -250,7 +250,7 @@ def legalMove(queenToRepair, queensMoved, potentialColumn, mainList, N):
 
 
 # -----------minConflicts----------- #
-
+# Returns:
 # ---------------------------------- #
 
 def minConflicts(N):
@@ -316,7 +316,7 @@ def minConflicts(N):
 
 
 # -----------solveNqueens----------- #
-
+# Returns:
 # ---------------------------------- #
 
 def solveNqueens(N):
