@@ -32,7 +32,7 @@ def init(mainList, N):
     leftDiagonalCounter.remove(0) 
     rightDiagonalCounter.remove(0)
 
-    # Creates a Random Board where Queens are not in column and row
+    # Creates a Random Board where Queens are not in the same column and row
     random.shuffle(emptyColumns)
 	
     for row in range(0, N): 
