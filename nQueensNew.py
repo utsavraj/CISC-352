@@ -206,7 +206,11 @@ def constraints(mainList):
 # -----------leftDiagonalConflicts----------- #
 # Returns: For a given queen, calculates all its left Diagonal Conflicts.
 # Based on: https://towardsdatascience.com/computing-number-of-conflicting-pairs-in-a-n-queen-board-in-linear-time-and-space-complexity-e9554c0e0645
-# Left Diagonal Refers to:
+# Left Diagonal for 'Q' Refers to:
+# - - - -
+# - X - -
+# - -  Q -
+# - - - -
 # ------------------------------------------- #
 def leftDiagonalConflicts(queen, mainList, N):
     current = mainList[0]
@@ -220,11 +224,11 @@ def leftDiagonalConflicts(queen, mainList, N):
 # -----------rightDiagonalConflicts----------- #
 # Returns: For a given queen, calculates all its right Diagonal Conflicts.
 # Based on: https://towardsdatascience.com/computing-number-of-conflicting-pairs-in-a-n-queen-board-in-linear-time-and-space-complexity-e9554c0e0645
-# Right Diagonal Refers to (examplw for a 4 sized board) :
-#
-#
-#
-#
+# Right Diagonal for 'Q' Refers to (example for a 4 sized board) :
+# - - - -
+# - Q - -
+# - -  X -
+# - - - -
 # -------------------------------------------- #
 def rightDiagonalConflicts(queen, mainList):
     current = mainList[0]
