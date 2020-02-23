@@ -33,8 +33,10 @@ def init(mainList, N):
             emptyColumns.remove(bestCol)
 
     return mainList
-    
+ 
+# -----------getBestColumn----------- #
 
+# ----------------------------------- #
 def getBestColumn(queen, mainList, N):
     originalColumn = int(mainList[0][queen])
     bestColumn = checkEmptyColumns(queen, mainList, N, originalColumn)
@@ -50,6 +52,10 @@ def getBestColumn(queen, mainList, N):
     else:
         return bestColumn
 
+
+# -----------updateConflicts----------- #
+
+# ------------------------------------- #
 
 def updateConflicts(mainList, row, newColumn, oldColumn, N):
     columnCounter = mainList[1]
@@ -70,7 +76,11 @@ def updateConflicts(mainList, row, newColumn, oldColumn, N):
 
     return mainList
 	
-	
+
+# -----------checkEmptyColumns----------- #
+
+# --------------------------------------- #
+
 def checkEmptyColumns(queen, mainList, N, originalColumn):
     initMatrix = mainList[0]
     emptyColumns = mainList[4]
@@ -90,7 +100,9 @@ def checkEmptyColumns(queen, mainList, N, originalColumn):
 
     return -1
 
+# -----------randomColumnChecker----------- #
 
+# ----------------------------------------- #
 def randomColumnChecker(queen, mainList, N, originalColumn):
     initMatrix = mainList[0]
     k = 100
@@ -114,6 +126,9 @@ def randomColumnChecker(queen, mainList, N, originalColumn):
     
     return -1
 
+# -----------getMatrix----------- #
+
+# ------------------------------- #
 
 def getMatrix(queen, mainList, N, originalColumn):
     initMatrix = mainList[0]
@@ -133,6 +148,10 @@ def getMatrix(queen, mainList, N, originalColumn):
     return initMatrix[queen]
 
 
+# -----------getConflicts----------- #
+
+# ---------------------------------- #
+
 def getConflicts(queen, mainList, N):
     current = mainList[0]
     row = queen # for clarity
@@ -144,6 +163,11 @@ def getConflicts(queen, mainList, N):
     totalConflicts = (columnConflicts + leftDiagConflicts + rightDiagConflicts) - 3
     return totalConflicts 
 
+
+
+# -----------constraints----------- #
+
+# --------------------------------- #
 
 def constraints(mainList):
     columnCounter = list(mainList[1])
@@ -169,7 +193,9 @@ def constraints(mainList):
     return result
 
 
+# -----------leftDiagonalConflicts----------- #
 
+# ------------------------------------------- #
 def leftDiagonalConflicts(queen, mainList, N):
     current = mainList[0]
     row = queen 
@@ -179,7 +205,9 @@ def leftDiagonalConflicts(queen, mainList, N):
     leftDiagonalConflicts = leftDiagonalCounter[leftDiagonalIndex] 
     return leftDiagonalConflicts 
 
+# -----------rightDiagonalConflicts----------- #
 
+# -------------------------------------------- #
 def rightDiagonalConflicts(queen, mainList):
     current = mainList[0]
     row = queen
@@ -190,6 +218,9 @@ def rightDiagonalConflicts(queen, mainList):
     return rightDiagonalConflicts 
 
 
+# -----------legalMove----------- #
+
+# ------------------------------- #
 def legalMove(queenToRepair, queensMoved, potentialColumn, mainList, N):
     current = mainList[0]
     for movedQueen in queensMoved:
@@ -207,7 +238,12 @@ def legalMove(queenToRepair, queensMoved, potentialColumn, mainList, N):
                 if rightDiagIndexMovedQueen == rightDiagIndexQueenToRepair:
                     return False
     return True
-	
+
+
+# -----------minConflicts----------- #
+
+# ---------------------------------- #
+
 def minConflicts(N):
     mainList = [[],[],[],[],[]]
     mainList = init(mainList, N)
@@ -268,7 +304,12 @@ def minConflicts(N):
                 
     return mainList
 
-	
+
+
+# -----------solveNqueens----------- #
+
+# ---------------------------------- #
+
 def solveNqueens(N):
     max = 0
 
@@ -309,6 +350,6 @@ def main():
     with open("nqueens_out.txt", "w") as f:
         f.write('\n'.join(solutionsString))
 
-    print("\nPlease Find the sounlition in file: \"nqueens_out.txt\"")
+    print("\nPlease Find the solution in file: \"nqueens_out.txt\"")
 
 main()
