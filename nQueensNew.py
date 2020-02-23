@@ -6,22 +6,29 @@ import random
 # ----------------------------- #
 
 def init(mainList, N):
+    # mainList is the dictionary that contains
+    # following information for a given index
     initMatrix = mainList[0]
     columnCounter = mainList[1]
     leftDiagonalCounter = mainList[2]
     rightDiagonalCounter = mainList[3]
     emptyColumns = mainList[4]
     
-    #make a 2*N sized list for each spot 
+    # make a N sized list for each spot 
     for i in range(0,N): 
         initMatrix.append(0)
         columnCounter.append(0)
+	
+	# Except for the Diagonal Conflicts as explained latter in their function
         leftDiagonalCounter.append(0)
         leftDiagonalCounter.append(0)
         rightDiagonalCounter.append(0)
         rightDiagonalCounter.append(0)
+	
+	# This column will be used for creating a random and hence needs to be started as [1,2,.....,N]
         emptyColumns.append(i+1)
-        
+     
+    # Remove the extra zero as calculation. only needs 2N - 1 size
     leftDiagonalCounter.remove(0) 
     rightDiagonalCounter.remove(0)
 
