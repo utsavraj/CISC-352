@@ -236,7 +236,7 @@ def rightDiagonalConflicts(queen, mainList):
 
 
 # -----------legalMove----------- #
-# Returns:
+# Returns: Makes sure that after moving the queen, it does not get in conflict with the previous moved queens (True/False)
 # ------------------------------- #
 def legalMove(queenToRepair, queensMoved, potentialColumn, mainList, N):
     current = mainList[0]
