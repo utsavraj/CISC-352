@@ -175,7 +175,8 @@ def getConflicts(queen, mainList, N):
 
 
 # -----------constraints----------- #
-# Returns:
+# Returns: True/False based on whether the following 4 constraints have been voilated or not. 
+# Only returns True if no two queens in the column, and only zero/one queen affect the left/right diagonal per index
 # --------------------------------- #
 
 def constraints(mainList):
