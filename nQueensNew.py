@@ -322,7 +322,7 @@ def minConflicts(N):
 def solveNqueens(N):
     max = 0
 
-    #Different max steps, depends on size of N
+    # Different max steps, depends on size of N
     if N <= 1000:
         max = 10
     elif N > 1000 and N <= 100000: 
