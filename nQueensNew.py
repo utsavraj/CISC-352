@@ -294,13 +294,13 @@ def main():
     with open("nqueens.txt", "r") as f:
         for line in f:
             N = int(line.rstrip())
-            print("\n-------------------------------")
+            print("\n**********************************")
             print("Board-size: ", N)
             start=time.time()
             solutions.append(solveNqueens(N))
             timeTaken=time.time()-start
-            print("SOLUTION FOUND IN:\t"+str(timedelta(seconds=timeTaken)))
-            print("-------------------------------")
+            print("Time Taken:\t"+str(timedelta(seconds=timeTaken)))
+            print("**********************************")
     solutionsString = []
     
     for solution in solutions:
@@ -309,6 +309,6 @@ def main():
     with open("nqueens_out.txt", "w") as f:
         f.write('\n'.join(solutionsString))
 
-    print("\nSOLUTIONS IN FILE \"nqueens_out.txt\"")
+    print("\nPlease Find the sounlition in file: \"nqueens_out.txt\"")
 
 main()
