@@ -1,7 +1,9 @@
+#### Python 3
+# -----------LIBRARY----------- #
 import time
 from datetime import timedelta
-
 import random
+# ----------------------------- #
 
 def init(mainList, N):
     initMatrix = mainList[0]
