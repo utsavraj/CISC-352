@@ -28,7 +28,7 @@ def init(mainList, N):
 	# This column will be used for creating a random board and hence needs to be started as [1,2,.....,N]
         emptyColumns.append(i+1)
      
-    # Remove the extra zero as calculation. only needs 2N - 1 size
+    # Remove the extra zero as calculation only needs 2N - 1 size
     leftDiagonalCounter.remove(0) 
     rightDiagonalCounter.remove(0)
 
