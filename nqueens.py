@@ -3,6 +3,9 @@
 import time
 from datetime import timedelta
 import random
+
+#!/usr/bin/env pypy
+
 # ----------------------------- #
 
 def init(mainList, N):
