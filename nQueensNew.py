@@ -44,7 +44,10 @@ def init(mainList, N):
     return mainList
  
 # -----------getBestColumn----------- #
-# Returns:
+# Returns: The best column position for the queen by:
+# checkEmptyColumns if it finds zero conflict position
+# randomColumnChecker: if it can find single conflict positiom
+# ELSE returns the best position by getMatrix
 # ----------------------------------- #
 def getBestColumn(queen, mainList, N):
     originalColumn = int(mainList[0][queen])
