@@ -90,7 +90,7 @@ def updateConflicts(mainList, row, newColumn, oldColumn, N):
 	
 
 # -----------checkEmptyColumns----------- #
-# Returns:
+# Returns: Original/New Best column position based on whether it can find a zero conflict positon or not
 # --------------------------------------- #
 
 def checkEmptyColumns(queen, mainList, N, originalColumn):
@@ -113,7 +113,7 @@ def checkEmptyColumns(queen, mainList, N, originalColumn):
     return -1
 
 # -----------randomColumnChecker----------- #
-# Returns:
+# Returns: Original/New Best column position based on whether it can find an only one conflict positon or not
 # ----------------------------------------- #
 def randomColumnChecker(queen, mainList, N, originalColumn):
     initMatrix = mainList[0]
@@ -139,7 +139,7 @@ def randomColumnChecker(queen, mainList, N, originalColumn):
     return -1
 
 # -----------getMatrix----------- #
-# Returns:
+# Returns: Best column position based on whether it can find the least conflict positon higher than one
 # ------------------------------- #
 
 def getMatrix(queen, mainList, N, originalColumn):
@@ -266,7 +266,7 @@ def legalMove(queenToRepair, queensMoved, potentialColumn, mainList, N):
 
 
 # -----------minConflicts----------- #
-# Returns:
+# Returns: The solution of the NxN board by repairing it with a suboptimal solution
 # ---------------------------------- #
 
 def minConflicts(N):
@@ -332,7 +332,7 @@ def minConflicts(N):
 
 
 # -----------solveNqueens----------- #
-# Returns:
+# Returns: the solution but also sets up the ranges for the small, medium and large input sizes to reduce backtracking.
 # ---------------------------------- #
 
 def solveNqueens(N):
