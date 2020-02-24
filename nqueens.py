@@ -1,199 +1,380 @@
-#-///-RUNNING TIME-///-#
-# n = 400: 151s
-# n = 500: 232s
-# n = 700:
-#----------------------#
-
-#!/usr/bin/env pypy
-import random
+#### Python 3
+# -----------LIBRARY----------- #
 import time
 from datetime import timedelta
+import random
+# ----------------------------- #
 
-#An Object Oriented Approach to the NQueens Problem
-#CISC 352, Queen's University Winter 2020
+def init(mainList, N):
+    # mainList is the dictionary that contains
+    # following information for a given index
+    initMatrix = mainList[0]
+    columnCounter = mainList[1]
+    leftDiagonalCounter = mainList[2]
+    rightDiagonalCounter = mainList[3]
+    emptyColumns = mainList[4]
+    
+    # make a N sized list for each spot 
+    for i in range(0,N): 
+        initMatrix.append(0)
+        columnCounter.append(0)
+	
+	# Except for the Diagonal Conflicts as explained latter in their function
+        leftDiagonalCounter.append(0)
+        leftDiagonalCounter.append(0)
+        rightDiagonalCounter.append(0)
+        rightDiagonalCounter.append(0)
+	
+	# This column will be used for creating a random board and hence needs to be started as [1,2,.....,N]
+        emptyColumns.append(i+1)
+     
+    # Remove the extra zero as calculation only needs 2N - 1 size
+    leftDiagonalCounter.remove(0) 
+    rightDiagonalCounter.remove(0)
 
-class nQueens:
+    # Creates a Random Board where Queens are not in the same column and row
+    random.shuffle(emptyColumns)
+	
+    for row in range(0, N): 
+        bestCol = getBestColumn(row, mainList, N)
+        initMatrix[row] = bestCol
+        if bestCol in emptyColumns:
+            emptyColumns.remove(bestCol)
 
-    #Initialize the board
+    return mainList
+ 
+# -----------getBestColumn----------- #
+# Returns: The best column position for the queen by:
+# checkEmptyColumns if it finds zero conflict position
+# randomColumnChecker: if it can find single conflict positiom
+# ELSE returns the best position by getMatrix
+# ----------------------------------- #
+def getBestColumn(queen, mainList, N):
+    originalColumn = int(mainList[0][queen])
+    bestColumn = checkEmptyColumns(queen, mainList, N, originalColumn)
 
-    def __init__(self, size):
-        self.board=[None]*size
-        self.rows=[i for i in range (size)]
-        random.shuffle(self.rows)
-        self.rowConf=[0]*size
-        self.lDiagConf=[0]*(2*size-1)
-        self.rDiagConf=[0]*(2*size-1)
-        self.confRemain=0
-        self.iterations=size*2
-        self.resets=0
-        self.start(size)
-        self.solve(size)
 
-    def start(self, size):
-        for col in range(size):#i represents the ith column on the board
-            if col==0:
-                row=random.randint(0,size-1)#Generate a random int to place queen in rth row
-                self.board[col]=row+1
-                self.evalConf(row, col, size) #evaluate how many conflicts the queen has generated
+    if bestColumn == -1:
+        bestColumn = randomColumnChecker(queen, mainList, N, originalColumn)
+        if bestColumn == -1:
+            bestColumn = getMatrix(queen, mainList, N, originalColumn)
+            return bestColumn
+        else:
+            return bestColumn
+    else:
+        return bestColumn
+
+
+# -----------updateConflicts----------- #
+# Returns: mainList based on whether the New Column would be a better placement than the old column
+# ------------------------------------- #
+
+def updateConflicts(mainList, row, newColumn, oldColumn, N):
+    columnCounter = mainList[1]
+    leftDiagonalCounter = mainList[2]
+    rightDiagonalCounter = mainList[3]
+
+   #updating new getConflicts
+    if newColumn != 0:
+        columnCounter[newColumn-1] += 1
+        leftDiagonalCounter[(N-1)-(row-(newColumn-1))] += 1
+        rightDiagonalCounter[row + (newColumn - 1)] += 1
+
+ 
+    if oldColumn != 0:
+        columnCounter[oldColumn-1] -= 1
+        leftDiagonalCounter[(N-1)-(row-(oldColumn-1))] -= 1
+        rightDiagonalCounter[row + (oldColumn - 1)] -= 1
+
+    return mainList
+	
+
+# -----------checkEmptyColumns----------- #
+# Returns: Original/New Best column position based on whether it can find a zero conflict positon or not
+# --------------------------------------- #
+
+def checkEmptyColumns(queen, mainList, N, originalColumn):
+    initMatrix = mainList[0]
+    emptyColumns = mainList[4]
+    previousColumn = originalColumn
+    for column in emptyColumns:
+        initMatrix[queen] = column
+        mainList = updateConflicts(mainList, queen, column, previousColumn, N)
+        columnConflicts = getConflicts(queen, mainList, N)
+        if columnConflicts == 0:
+            return column
+        previousColumn = column
+        
+    initMatrix[queen] = originalColumn
+    
+    mainList = updateConflicts(mainList, queen, originalColumn, previousColumn, N)
+  
+
+    return -1
+
+# -----------randomColumnChecker----------- #
+# Returns: Original/New Best column position based on whether it can find an only one conflict positon or not
+# ----------------------------------------- #
+def randomColumnChecker(queen, mainList, N, originalColumn):
+    initMatrix = mainList[0]
+    k = 100
+    previousColumn = originalColumn
+    if N <= 100:
+        k = int(N)
+    randomColumnsList = random.sample(range(1, N+1), k)
+
+
+    for column in randomColumnsList:
+        initMatrix[queen] = column
+        mainList = updateConflicts(mainList, queen, column, previousColumn, N)
+        columnConflicts = getConflicts(queen, mainList, N)
+        if columnConflicts == 1:
+            return column
+        previousColumn = column
+
+    initMatrix[queen] = originalColumn
+
+    mainList = updateConflicts(mainList, queen, originalColumn, column, N)
+    
+    return -1
+
+# -----------getMatrix----------- #
+# Returns: Best column position based on whether it can find the least conflict positon higher than one
+# ------------------------------- #
+
+def getMatrix(queen, mainList, N, originalColumn):
+    initMatrix = mainList[0]
+    previousColumn = originalColumn
+
+    for column in range(1, N+1):
+        initMatrix[queen] = column
+        mainList = updateConflicts(mainList, queen, column, previousColumn, N)
+        columnConflicts = getConflicts(queen, mainList, N)
+        if columnConflicts == 1:
+            return column
+        previousColumn = column
+        
+    initMatrix[queen] = originalColumn
+    mainList = updateConflicts(mainList, queen, originalColumn, previousColumn, N)
+
+    return initMatrix[queen]
+
+
+# -----------getConflicts----------- #
+# Returns: Calculates all/total number of conflicts for a given Queen
+# ---------------------------------- #
+
+def getConflicts(queen, mainList, N):
+    current = mainList[0]
+    row = queen # for clarity
+    column = current[row]
+    totalConflicts = 0
+    columnConflicts = mainList[1][column-1] 
+    leftDiagConflicts = leftDiagonalConflicts(queen, mainList, N) 
+    rightDiagConflicts = rightDiagonalConflicts(queen, mainList) 
+    totalConflicts = (columnConflicts + leftDiagConflicts + rightDiagConflicts) - 3
+    return totalConflicts 
+
+
+
+# -----------constraints----------- #
+# Returns: True/False based on whether the following 4 constraints have been voilated or not. 
+# Only returns True if no two queens in the column, and only zero/one queen affect the left/right diagonal per index
+# --------------------------------- #
+
+def constraints(mainList):
+    columnCounter = list(mainList[1])
+    leftDiagonalCounter = list(mainList[2])
+    rightDiagonalCounter = list(mainList[3])
+
+    result = True
+    columnCounter.sort()
+    columnCounter.reverse()
+    for c in columnCounter:
+        if c > 1:
+            return False
+    leftDiagonalCounter.sort()
+    leftDiagonalCounter.reverse()
+    for ld in leftDiagonalCounter:
+        if ld > 1:
+            return False
+    rightDiagonalCounter.sort()
+    rightDiagonalCounter.reverse()
+    for rd in rightDiagonalCounter:
+        if rd > 1:
+            return False
+    return result
+
+
+# -----------leftDiagonalConflicts----------- #
+# Returns: For a given queen, calculates all its left Diagonal Conflicts. 1 for value means no conflict.
+# Based on: https://towardsdatascience.com/computing-number-of-conflicting-pairs-in-a-n-queen-board-in-linear-time-and-space-complexity-e9554c0e0645
+# Left Diagonal for 'Q' Refers to:
+# - - - -
+# - Q - -
+# - -  X -
+# - - - -
+# ------------------------------------------- #
+def leftDiagonalConflicts(queen, mainList, N):
+    current = mainList[0]
+    row = queen 
+    column = current[row]
+    leftDiagonalCounter = mainList[2]
+    leftDiagonalIndex = (N-1) - (row - (column-1) )
+    leftDiagonalConflicts = leftDiagonalCounter[leftDiagonalIndex] # Do not count the current queen as a conflict
+    return leftDiagonalConflicts 
+
+# -----------rightDiagonalConflicts----------- #
+# Returns: For a given queen, calculates all its right Diagonal Conflicts. 1 for value means no conflict.
+# Based on: https://towardsdatascience.com/computing-number-of-conflicting-pairs-in-a-n-queen-board-in-linear-time-and-space-complexity-e9554c0e0645
+# Right Diagonal for 'Q' Refers to (example for a 4 sized board) :
+# - - - -
+# - X - -
+# - -  Q -
+# - - - -
+# -------------------------------------------- #
+def rightDiagonalConflicts(queen, mainList):
+    current = mainList[0]
+    row = queen
+    column = current[row]
+    rightDiagonalCounter = mainList[3]
+    rightDiagonalIndex = (row + (column - 1)) 
+    rightDiagonalConflicts = rightDiagonalCounter[rightDiagonalIndex] # Do not count the current queen as a conflict
+    return rightDiagonalConflicts 
+
+
+# -----------legalMove----------- #
+# Returns: Makes sure that after moving the queen, it does not get in conflict with the previous moved queens (True/False)
+# ------------------------------- #
+def legalMove(queenToRepair, queensMoved, potentialColumn, mainList, N):
+    current = mainList[0]
+    for movedQueen in queensMoved:
+        movedQueenCol = current[movedQueen]
+        if potentialColumn == movedQueenCol:
+            return False
+        else:
+            leftDiagIndexMovedQueen = (N-1) - (movedQueen - (movedQueenCol-1) )
+            leftDiagIndexQueenToRepair = (N-1) - (queenToRepair - (potentialColumn-1) )
+            if leftDiagIndexMovedQueen == leftDiagIndexQueenToRepair:
+                return False
             else:
-                x=self.colConf(col,size)
-                self.confRemain==x
+                rightDiagIndexMovedQueen = (movedQueen + (movedQueenCol - 1))
+                rightDiagIndexQueenToRepair = (queenToRepair + (potentialColumn - 1))
+                if rightDiagIndexMovedQueen == rightDiagIndexQueenToRepair:
+                    return False
+    return True
 
-    def evalConf(self, row, col, size):
-        if (row-col)>=0:
-            leftDiag=row-col
+
+# -----------minConflicts----------- #
+# Returns: The solution of the NxN board by repairing it with a suboptimal solution
+# ---------------------------------- #
+
+def minConflicts(N):
+    mainList = [[],[],[],[],[]]
+    mainList = init(mainList, N)
+    current = mainList[0]
+    columnCounter = mainList[1]
+    emptyColumns = mainList[4]
+    maxSteps = N
+
+    if N < 1000:
+        maxSteps = 1000
+    
+    currentStep = 0
+    changed = True 
+    queensUnmoved = random.sample(range(0, N), N)
+    queensMoved = []
+    queensLeft = N
+    queenToRepair = 0
+    noQueen = 0
+
+    while currentStep <= maxSteps:
+        if changed: # constrains below so that it's only called if necessary
+            if constraints(mainList) == True:
+                print("STEP: ", currentStep)
+                
+                return mainList
+
+        if N > 500:
+            queenToRepair = queensUnmoved[random.randint(0,queensLeft-1)]
         else:
-            leftDiag=(row-col)+(2*size-1)
-        rightDiag=row+col
-        numConf=self.rowConf[row]+self.lDiagConf[leftDiag]+self.rDiagConf[rightDiag]
-        return numConf
-
-    def solveConfUpdate(self, nRow, col, size):
-        if (nRow-col)>=0:
-            leftDiag=nRow-col
-        else:
-            leftDiag=(nRow-col)+(2*size-1)
-        self.rowConf[nRow]+=1
-        self.lDiagConf[leftDiag]+=1
-        self.rDiagConf[nRow+col]+=1
-
-    def conflictUpdate(self, row, col, size):
-        if (row-col)>=0:
-            leftDiag=row-col
-        else:
-            leftDiag=(row-col)+(2*size-1)
-        self.rowConf[row]+=1
-        self.lDiagConf[leftDiag]+=1
-        self.rDiagConf[row+col]+=1
-        self.rows.remove(row)
-                    
-    def colConf(self, col, size):
-        confOne=[]
-        confTwo=[]
-        for row in self.rows:
-            numConf=self.evalConf(row, col, size)
-            if numConf==0:
-                self.board[col]=row+1
-                self.conflictUpdate(row,col,size)
-                return 0
-            if numConf==1:
-                confOne.append(row)
-            if numConf==2:
-                confTwo.append(row)
-        if len(confOne)==0:
-            rVal=random.choice(confTwo)
-            self.board[col]=rVal+1
-            self.conflictUpdate(rVal, col, size)
-            return 2
-        rVal=random.choice(confOne)
-        self.board[col]=rVal+1
-        self.conflictUpdate(rVal, col, size)
-        return 1
-
-    def delQueen(self, oRow, col, size):
-        if (oRow-col)>=0:
-            lDiag=oRow-col
-        else:
-            lDiag=(oRow-col)+(2*size-1)
-        self.lDiagConf[lDiag]-=1
-        self.rDiagConf[rDiag]-=1
-        self.rowConf[oRow]-=1
-        if self.rowConf[oRow]==0:
-            self.rows.append(oRow)
-
-    def restart(self, size):
-        self.board=[None]*size
-        self.rows=[i for i in range (size)]
-        random.shuffle(self.emptyRows)
-        self.rowConf=[0]*size
-        self.lDiagConf=[0]*(2*size-1)
-        self.rDiagConf=[0]*(2*size-1)
-        self.confRemain=0
-        self.iterations=size*2
-        self.start(size)
-        self.solve(size)
-
-    def solve (self, size):
-        for i in range(self.iterations):
+            queenToRepair = random.randint(0,N-1)
             
-            if self.confRemain==0:
-                return#Solution Found!
-            else:
-                randCol=random.randint(0,size-1) #look at a random col with 1 or more conflicts
-                oRow=self.board(randCol)
-                oRow-=1
-                numConf= self.evalConf(oRow,randCol, size)-3
-                while numConf <1:
-                    randCol=random.randint(0,size-1)
-                    oRow=self.board(randCol)
-                    oRow-=1
-                    numConf= self.evalConf(oRow,randCol, size)-3
+        if getConflicts(queenToRepair, mainList, N) != 0:
+            # repair Queen
+            changed = True
+            oldColumn = current[queenToRepair]
+            bestCol = getBestColumn(queenToRepair, mainList, N)
+            
+            if N > 500:
+                while legalMove(queenToRepair, queensMoved, bestCol, mainList, N) == False:
+                    bestCol = getBestColumn(queenToRepair, mainList, N)
 
-                conflictsUpdated=False
-                for newRow in self.rows:
-                    numConf=self.calcConf(newRow, randCol, size)
-                    if numConf==0:
-                        self.board[randCol]=newRow+1
-                        self.confRemain-=(self.evalConf(newRow, randCol, size)-3)
-                        self.conflictUpdate(newRow, randCol, size)
-                        self.delQueen(oRow, randCol, size)
-                        conflictsUpdated=True
-                        break
+            current[queenToRepair] = bestCol
+            if bestCol in emptyColumns:
+                emptyColumns.remove(bestCol)
+            if columnCounter[oldColumn-1] == 0:
+                emptyColumns.append(oldColumn)
+            
+            currentStep += 1
+            noQueen = 0
 
-                if conflicsUpdated==False:
-                    confTwo=[]
-                    randRow=random.randint(0,size-1)
-                    numConf=self.calcConf(randRow, randCol, size)
-                    count=0
-                    while numConf!=1:
-                        randRow=random.randint(0,size-1)
-                        numConf=self.calcConf(randRow, randCol, size)
-                        if numConflicts==2:
-                            confTwo.append(randRow)
-                        Counter+=1
-                        if counter == int(size/3):
-                            break
-                    if numConf==1:
+            if N > 500:
+                queensLeft -= 1
+                queensUnmoved.remove(queenToRepair)
+                queensMoved.append(queenToRepair)
+        else:
+            noQueen += 1
+            changed = False
+                
+    return mainList
 
-                        self.board[randCol] = randRow + 1
-                        self.confRemain -= ((self.calcConf(oRow, randCol, n) - 3) - numConf)
-                        self.solveConfUpdate(randRow,randCol,size)
-                        self.delQueen(oRow, randCol, size)
-                    else:
-                        if len(confTwo)>0:
-                            randRow=random.choice(confTwo)
-                            self.board[randCol] = randRow + 1
-                            self.confRemain -= ((self.calcConf(oRow, randCol, size) - 3) - numConf)
-                            self.solveConfUpdate(randRow,randCol,size)
-                            self.delQueen(oRow, randCol, size)
-                        else:
-                            while numConf > (self.calcConf(oRow, randCol, n) - 3):
-                                randRow=random.randint(0, n - 1)
-                                numConf=calcConf(oRow, randCol, size)
-                            self.board[randCol] = randRow + 1
-                            self.confRemain -= ((self.calcConf(oRow, randCol, n) - 3) - numConf)
-                            self.solveConfUpdate(randRow,randCol,size)
-                            self.delQueen(oRow, randCol, size)
-        self.resets+= 1
-        print("restarting")
-        self.restart(n)
+
+
+# -----------solveNqueens----------- #
+# Returns: the solution but also sets up the ranges for the small, medium and large input sizes to reduce backtracking.
+# ---------------------------------- #
+
+def solveNqueens(N):
+    max = 0
+
+    # Different max steps, depends on size of N
+    if N <= 1000:
+        max = 10
+    elif N > 1000 and N <= 100000: 
+        max = 20
+    elif N > 100000 and N <= 1000000: 
+        max = 3
+    else:
+        print ("N is too large.")
+
+    for i in range(0,max):
+        currentAttempt = minConflicts(N)
+        if constraints(currentAttempt) == True:
+            break
+        
+    return currentAttempt[0]
 
 def main():
-    input = open("nqueens.txt")
-    output = open("nqueens_out.txt", "w")
-    lines = input.readlines()
-    lines = [x.strip() for x in lines]
-    lines = [int(i) for i in lines]
-    for n in lines:
-        print("Board size:\t\t"+str(n))
-        start=time.time()
-        board = nQueens(n)
-        timeTaken=time.time()-start
-        print("Solution Found in:\t\t"+str(timedelta(seconds=timeTaken)))
-        #print("Remaining Conflicts: "+str(board.confRemain))
-        print(board.board)
-        print("Required # of Resets: "+str(board.resets))
-        print("---")
-                
-        output.write(str(board.board) + "\n")
-main()   
+    solutions = []
+    with open("nqueens.txt", "r") as f:
+        for line in f:
+            N = int(line.rstrip())
+            print("\n**********************************")
+            print("Board-size: ", N)
+            start=time.time()
+            solutions.append(solveNqueens(N))
+            timeTaken=time.time()-start
+            print("Time Taken:\t"+str(timedelta(seconds=timeTaken)))
+            print("**********************************")
+    solutionsString = []
+    
+    for solution in solutions:
+        solutionsString.append(str(solution))
+        
+    with open("nqueens_out.txt", "w") as f:
+        f.write('\n'.join(solutionsString))
+
+    print("\nPlease Find the solution in file: \"nqueens_out.txt\"")
+
+main()
