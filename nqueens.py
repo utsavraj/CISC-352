@@ -335,7 +335,7 @@ def minConflicts(N):
 
 
 # -----------solveNqueens----------- #
-# Returns: the solution but also sets up the ranges for the small, medium and large input sizes to reduce backtracking.
+# Returns: the solution but also sets up the ranges for the small, medium and large input sizes to eliminate the desire for backtracking.
 # ---------------------------------- #
 
 def solveNqueens(N):
