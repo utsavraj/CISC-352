@@ -63,7 +63,7 @@ def getBestColumn(queen, mainList, N):
 
 
 # -----------updateConflicts----------- #
-# Returns:
+# Returns: mainList based on whether the New Column would be a better placement than the old column
 # ------------------------------------- #
 
 def updateConflicts(mainList, row, newColumn, oldColumn, N):
