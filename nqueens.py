@@ -346,7 +346,7 @@ def solveNqueens(N):
         max = 10
     elif N > 1000 and N <= 100000: 
         max = 20
-    elif N > 100000 and N <= 1000000: 
+    elif N > 100000: 
         max = 3
     else:
         print ("N is too large.")
