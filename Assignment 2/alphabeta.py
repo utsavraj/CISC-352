@@ -7,6 +7,17 @@ import os
 
 
 def graph_solution(graph, graph_number):
+
+  graph = graph.split()
+
+  # Converts min-max info about nodes into a dictionary
+  # Works as nodes can only be letters - not characters
+  node_info = dict(item.replace('(','').split(",") for item in graph[0][1:-2].split("),"))
+
+  tree_info = graph[1]
+
+  print( node_info )
+
   return "Graph "+ str(graph_number+ 1) + ": Score: 4; Leaf Nodes Examined: 6"
 
 def main():
@@ -33,4 +44,3 @@ def main():
   output_file.close()
 
 main()
-
