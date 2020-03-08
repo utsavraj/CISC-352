@@ -1,15 +1,50 @@
 #### Python 3
 # -----------LIBRARY----------- #
 import os
+from collections import defaultdict
+import sys
 # ----------------------------- #
 
 
 # ----------tree_generator----------- #
 # Parameter: Tree information from the graph about children, root, leaves nodes
 # Creates a general tree to run alpha-beta pruning on.
+# Returns: General Tree
 # ----------------------------------- #
 def tree_generator(tree_info):
-  print( tree_info )
+  tree_info= tree_info.replace('(','').replace('),','#').replace(',',':').replace('#',',').split(',')
+  tree_info= list(item.split(":") for item in tree_info)
+
+  # intilise
+  d1 = defaultdict(list)
+
+  for k, v in tree_info:
+      d1[k].append(v)
+  
+  tree = dict((k, tuple(v)) for k, v in d1.items())
+  return tree
+
+
+# ----------alpha_beta_pruning----------- #
+# Parameter: 
+# - tree: A multi-value dictionary containing info about's each node's children
+# - node_info: Whether Each node is MIN or MAX
+# Creates a general tree to run alpha-beta pruning on.
+# Returns: Score and number of nodes visited
+# ----------------------------------- #
+def alpha_beta_pruning(tree, node_info):
+  alpha = -sys.maxsize -1
+  beta = sys.maxsize
+  
+
+
+  print(tree)
+  print(node_info)
+  print(alpha)
+  print(beta)
+
+
+
 
 
 def graph_solution(graph, graph_number):
@@ -21,7 +56,9 @@ def graph_solution(graph, graph_number):
   node_info = dict(item.replace('(','').split(",") for item in graph[0][1:-2].split("),"))
 
   #Creating a general tree
-  tree_generator(graph[1][1:-1])
+  tree = tree_generator(graph[1][1:-2])
+
+  alpha_beta_pruning(tree, node_info)
 
   return "Graph "+ str(graph_number+ 1) + ": Score: 4; Leaf Nodes Examined: 6"
 
