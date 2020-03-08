@@ -26,7 +26,7 @@ def tree_generator(tree_info):
 
 # ----------children----------- #
 # Parameter: 
-# - tree: A multi-value dictionary containing info about's each node's children
+# - tree: A multi-value dictionary containing info about each node's children
 # - token: the node for which we want the children
 # Creates a general tree to run alpha-beta pruning on.
 # Returns: A list of all children with the token ordered by depth-right frst
@@ -41,7 +41,7 @@ def children(token, tree):
           node_children = tree[current]
         except KeyError:
           continue
-        to_crawl.extendleft(node_children)
+        to_crawl.extend(node_children)
     return child_list
 
 
@@ -51,21 +51,23 @@ def children(token, tree):
 # - node_info: Whether Each node is MIN or MAX
 # Creates a general tree to run alpha-beta pruning on.
 # Returns: Score and number of nodes visited
+# ***Known issue***
+# ALPHA_BETA_PRUNING NOT ITERATING TREE
 # ----------------------------------- #
 def alpha_beta_pruning(tree, node_info, alpha, beta,node,nodes_searched ):
+  print(children(node, tree))
   try:
     if (node_info[node] == "MAX"):
-      for i in range(len(tree[node])):
+      for i in range(len(tree[node])): #USELESS
         temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )
         if (temp is None ):
           alpha = -sys.maxsize - 1
           return alpha
         else:
           alpha = max(alpha,temp )
-          return alpha
-      if (alpha <= beta ):
-        nodes_searched = nodes_searched + 1
-    elif (node_info[node] == "MIN"):
+          if (alpha <= beta ):
+            return alpha
+    elif (node_info[node] == "MIN"): #USELESS
       for i in range(len(tree[node])):
         temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )
         if (temp is None ):
@@ -73,9 +75,8 @@ def alpha_beta_pruning(tree, node_info, alpha, beta,node,nodes_searched ):
           return beta
         else:
           beta = min(beta,temp)
-          return beta
-      if (alpha <= beta ):
-        nodes_searched = nodes_searched + 1
+          if (alpha <= beta ):
+            return beta
   except KeyError:
     if (node_info[node] == "MIN"):
       if (beta > int(tree[node][i])):
