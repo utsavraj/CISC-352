@@ -78,10 +78,12 @@ def alpha_beta_pruning(tree, node_info, alpha, beta,node,nodes_searched ):
         nodes_searched = nodes_searched + 1
   except KeyError:
     if (node_info[node] == "MIN"):
-      beta = int(tree[node][i])
+      if (beta > int(tree[node][i])):
+        beta = int(tree[node][i])
       return beta
     elif (node_info[node] == "MAX"):
-      alpha = int(tree[node][i])
+      if (alpha < int(tree[node][i])):
+        alpha = int(tree[node][i])
       return alpha
 
 
