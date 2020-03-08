@@ -52,19 +52,31 @@ def children(token, tree):
 # Returns: Score and number of nodes visited
 # ----------------------------------- #
 def alpha_beta_pruning(tree, node_info, alpha, beta,node,nodes_searched ):
-
-  if (node_info[node] == "MAX"):
-    if (alpha >= beta ):
-      print("XYX")
-    print("XXX")
-    nodes_searched = nodes_searched + 1
-
-
-  if (node_info[node] == "MIN"):
-    if (alpha >= beta ):
-      print("YXY")
-    print("YYY")
-    nodes_searched = nodes_searched + 1
+  try:
+    if (node_info[node] == "MAX"):
+      for i in range(len(tree[node])):
+        alpha = max(alpha,int(alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )) )
+      if (alpha <= beta ):
+        nodes_searched = nodes_searched + 1
+      else:
+        print("YYY")
+    elif (node_info[node] == "MIN"):
+      for i in range(len(tree[node])):
+        beta = min(beta,int(alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )))
+      if (alpha <= beta ):
+        nodes_searched = nodes_searched + 1
+      else:
+        print("YYY")
+  except KeyError:
+    
+    for key, value in tree.items(): 
+      if tree[node][i] == value: 
+      #   print(key, value)
+      #   minmax_info = key 
+        # if(node_info[minmax_info] == "MAX"):
+        alpha = int(value)
+        # elif(node_info[minmax_info] == "MIN"):
+        #   beta = int(value)
 
 
   # left_right_tree = []
