@@ -3,20 +3,25 @@
 import os
 # ----------------------------- #
 
-#def alpha_beta_pruning(n):
+
+# ----------tree_generator----------- #
+# Parameter: Tree information from the graph about children, root, leaves nodes
+# Creates a general tree to run alpha-beta pruning on.
+# ----------------------------------- #
+def tree_generator(tree_info):
+  print( tree_info )
 
 
 def graph_solution(graph, graph_number):
 
   graph = graph.split()
 
-  # Converts min-max info about nodes into a dictionary
+  # Converts min-max info about each node into a dictionary
   # Works as nodes can only be letters - not characters
   node_info = dict(item.replace('(','').split(",") for item in graph[0][1:-2].split("),"))
 
-  tree_info = graph[1]
-
-  print( node_info )
+  #Creating a general tree
+  tree_generator(graph[1][1:-1])
 
   return "Graph "+ str(graph_number+ 1) + ": Score: 4; Leaf Nodes Examined: 6"
 
