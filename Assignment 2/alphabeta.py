@@ -51,19 +51,27 @@ def children(token, tree):
 # Creates a general tree to run alpha-beta pruning on.
 # Returns: Score and number of nodes visited
 # ----------------------------------- #
-def alpha_beta_pruning(tree, node_info, alpha, beta,node):
+def alpha_beta_pruning(tree, node_info, alpha, beta,node,nodes_searched ):
 
   if (node_info[node] == "MAX"):
+    if (alpha >= beta ):
+      print("XYX")
     print("XXX")
+    nodes_searched = nodes_searched + 1
+
 
   if (node_info[node] == "MIN"):
-    print("XXX")
+    if (alpha >= beta ):
+      print("YXY")
+    print("YYY")
+    nodes_searched = nodes_searched + 1
 
-  left_right_tree = []
-  for i in range(len(tree[node])):
-    left_right_tree.append(children(tree[node][i], tree))
 
-  print(left_right_tree)
+  # left_right_tree = []
+  # for i in range(len(tree[node])):
+  #   left_right_tree.append(children(tree[node][i], tree))
+
+  # print(left_right_tree)
 
 
 def graph_solution(graph, graph_number):
@@ -80,7 +88,8 @@ def graph_solution(graph, graph_number):
   alpha = -sys.maxsize - 1
   beta = sys.maxsize
   node = list(tree.keys())[0]
-  alpha_beta_pruning(tree, node_info,alpha,beta, node)
+  nodes_searched = 0
+  alpha_beta_pruning(tree, node_info,alpha,beta, node, nodes_searched)
 
   return "Graph "+ str(graph_number+ 1) + ": Score: 4; Leaf Nodes Examined: 6"
 
