@@ -55,28 +55,9 @@ def children(token, tree):
 # ALPHA_BETA_PRUNING NOT ITERATING TREE
 # ----------------------------------- #
 def alpha_beta_pruning(tree, node_info, alpha, beta,node,nodes_searched ):
-  print(children(node, tree))
   try:
     if (node_info[node] == "MAX"):
-      for i in range(len(tree[node])): #USELESS
-        temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )
-        if (temp is None ):
-          alpha = -sys.maxsize - 1
-          return alpha
-        else:
-          alpha = max(alpha,temp )
-          if (alpha <= beta ):
-            return alpha
-    elif (node_info[node] == "MIN"): #USELESS
-      for i in range(len(tree[node])):
-        temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )
-        if (temp is None ):
-          beta = sys.maxsize
-          return beta
-        else:
-          beta = min(beta,temp)
-          if (alpha <= beta ):
-            return beta
+      tree_node_len = len(tree[node])
   except KeyError:
     if (node_info[node] == "MIN"):
       if (beta > int(tree[node][i])):
@@ -86,6 +67,46 @@ def alpha_beta_pruning(tree, node_info, alpha, beta,node,nodes_searched ):
       if (alpha < int(tree[node][i])):
         alpha = int(tree[node][i])
       return alpha
+
+    for i in range(tree_node_len):
+      print(tree[node][i])
+      temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )
+      if (temp is None and alpha == -sys.maxsize - 1):
+        return alpha
+      else:
+        alpha = max(alpha,temp )
+
+          # Alpha Beta Pruning
+      if (alpha <= beta ):
+          return alpha
+      else:
+          i = tree_node_len
+          break
+
+  try:
+    if (node_info[node] == "MIN"): #USELESS
+      tree_node_len = len(tree[node])
+  except KeyError:
+    if (node_info[node] == "MIN"):
+      if (beta > int(tree[node][i])):
+        beta = int(tree[node][i])
+      return beta
+    elif (node_info[node] == "MAX"):
+      if (alpha < int(tree[node][i])):
+        alpha = int(tree[node][i])
+      return alpha
+    for i in range(tree_node_len):
+      temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )
+      if (temp is None and beta == sys.maxsize):
+        return beta
+      else:
+        beta = min(beta,temp)
+        # Alpha Beta Pruning
+        if (alpha <= beta ):
+          return beta
+        else:
+          i = tree_node_len
+          break
 
 
 
