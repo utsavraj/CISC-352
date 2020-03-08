@@ -44,6 +44,7 @@ def children(token, tree):
         to_crawl.extendleft(node_children)
     return child_list
 
+
 # ----------alpha_beta_pruning----------- #
 # Parameter: 
 # - tree: A multi-value dictionary containing info about's each node's children
@@ -55,35 +56,34 @@ def alpha_beta_pruning(tree, node_info, alpha, beta,node,nodes_searched ):
   try:
     if (node_info[node] == "MAX"):
       for i in range(len(tree[node])):
-        alpha = max(alpha,int(alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )) )
+        temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )
+        if (temp is None ):
+          alpha = -sys.maxsize - 1
+          return alpha
+        else:
+          alpha = max(alpha,temp )
+          return alpha
       if (alpha <= beta ):
         nodes_searched = nodes_searched + 1
-      else:
-        print("YYY")
     elif (node_info[node] == "MIN"):
       for i in range(len(tree[node])):
-        beta = min(beta,int(alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )))
+        temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )
+        if (temp is None ):
+          beta = sys.maxsize
+          return beta
+        else:
+          beta = min(beta,temp)
+          return beta
       if (alpha <= beta ):
         nodes_searched = nodes_searched + 1
-      else:
-        print("YYY")
   except KeyError:
-    
-    for key, value in tree.items(): 
-      if tree[node][i] == value: 
-      #   print(key, value)
-      #   minmax_info = key 
-        # if(node_info[minmax_info] == "MAX"):
-        alpha = int(value)
-        # elif(node_info[minmax_info] == "MIN"):
-        #   beta = int(value)
+    if (node_info[node] == "MIN"):
+      beta = int(tree[node][i])
+      return beta
+    elif (node_info[node] == "MAX"):
+      alpha = int(tree[node][i])
+      return alpha
 
-
-  # left_right_tree = []
-  # for i in range(len(tree[node])):
-  #   left_right_tree.append(children(tree[node][i], tree))
-
-  # print(left_right_tree)
 
 
 def graph_solution(graph, graph_number):
@@ -101,9 +101,9 @@ def graph_solution(graph, graph_number):
   beta = sys.maxsize
   node = list(tree.keys())[0]
   nodes_searched = 0
-  alpha_beta_pruning(tree, node_info,alpha,beta, node, nodes_searched)
+  temp = alpha_beta_pruning(tree, node_info,alpha,beta, node, nodes_searched)
 
-  return "Graph "+ str(graph_number+ 1) + ": Score: 4; Leaf Nodes Examined: 6"
+  return "Graph "+ str(graph_number+ 1) + ": Score: " + str(temp) + "; Leaf Nodes Examined: " +  str(nodes_searched)
 
 def main():
 
