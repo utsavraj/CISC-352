@@ -1,7 +1,7 @@
 #### Python 3
 # -----------LIBRARY----------- #
 import os
-from collections import defaultdict
+from collections import defaultdict,deque
 import sys
 # ----------------------------- #
 
@@ -24,6 +24,25 @@ def tree_generator(tree_info):
   tree = dict((k, tuple(v)) for k, v in d1.items())
   return tree
 
+# ----------children----------- #
+# Parameter: 
+# - tree: A multi-value dictionary containing info about's each node's children
+# - token: the node for which we want the children
+# Creates a general tree to run alpha-beta pruning on.
+# Returns: A list of all children with the token ordered by depth-right frst
+# ----------------------------------- #
+def children(token, tree):
+    child_list = []
+    to_crawl = deque([token])
+    while to_crawl:
+        current = to_crawl.popleft()
+        child_list.append(current)
+        try:
+          node_children = tree[current]
+        except KeyError:
+          continue
+        to_crawl.extendleft(node_children)
+    return child_list
 
 # ----------alpha_beta_pruning----------- #
 # Parameter: 
@@ -32,19 +51,8 @@ def tree_generator(tree_info):
 # Creates a general tree to run alpha-beta pruning on.
 # Returns: Score and number of nodes visited
 # ----------------------------------- #
-def alpha_beta_pruning(tree, node_info):
-  alpha = -sys.maxsize -1
-  beta = sys.maxsize
-  
-
-
-  print(tree)
-  print(node_info)
-  print(alpha)
-  print(beta)
-
-
-
+def alpha_beta_pruning(node_info, root, alpha, beta):
+  print(root)
 
 
 def graph_solution(graph, graph_number):
@@ -58,7 +66,10 @@ def graph_solution(graph, graph_number):
   #Creating a general tree
   tree = tree_generator(graph[1][1:-2])
 
-  alpha_beta_pruning(tree, node_info)
+  alpha = -sys.maxsize - 1
+  beta = sys.maxsize
+  root = list(tree.keys())[0]
+  alpha_beta_pruning(alpha,beta, root, node_info)
 
   return "Graph "+ str(graph_number+ 1) + ": Score: 4; Leaf Nodes Examined: 6"
 
