@@ -70,12 +70,6 @@ def is_min_node(node):
     else:
         return False
 
-def is_root_node(node):
-    if node[0] == nodeList[0]:
-        return True
-    else:
-        return False
-
 
 # implement given alpha_beta algorithm
 def alpha_beta(current_node, alpha, beta):
