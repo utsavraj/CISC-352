@@ -33,11 +33,6 @@ def tree_generator(tree_info):
 # ----------------------------------- #
 def alpha_beta_pruning(tree, node_info, alpha, beta,node,nodes_searched ):
 
-  # Starting criteria of node is the root node.
-  if (node == list(tree.keys())[0]):
-    alpha = -sys.maxsize - 1
-    beta = sys.maxsize
-
   if (node in node_info):
     tree_node_len = len(tree[node])
     for i in range(tree_node_len):
