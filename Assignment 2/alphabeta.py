@@ -1,8 +1,8 @@
 #### Python 3
 # -----------LIBRARY----------- #
 import os
-from collections import defaultdict,deque
-import sys
+from collections import defaultdict
+import math
 # ----------------------------- #
 
 
@@ -31,28 +31,34 @@ def tree_generator(tree_info):
 # Creates a general tree to run alpha-beta pruning on.
 # Returns: Score and number of nodes visited
 # ----------------------------------- #
-def alpha_beta_pruning(tree, node_info, alpha, beta,node,nodes_searched ):
+def alpha_beta_pruning(tree, node_info, alpha, beta,node):
+
+  print(node)
 
   if (node in node_info):
     tree_node_len = len(tree[node])
     for i in range(tree_node_len):
-      temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched)
+      temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i])
 
       if (node_info[node] == "MAX"):
         if (temp is None):
-          temp = -sys.maxsize - 1
-        alpha = max(alpha,temp)
-        if (alpha >= beta):
-          break
-        return alpha
+          continue
+        else:
+          alpha = max(alpha,temp)
+          if (alpha >= beta):
+            return alpha
+        #print(alpha)
+            
 
       if (node_info[node] == "MIN"):
         if (temp is None):
-          temp = sys.maxsize
-        beta = min(beta,temp)
-        if (beta <= alpha):
-          break
-        return beta
+          continue
+        else:
+          beta = min(beta,temp)
+          if (beta <= alpha):
+            return beta
+        #print(beta)
+              
 
   # If the leaves node, return the value
   else:
@@ -69,11 +75,11 @@ def graph_solution(graph, graph_number):
   #Creating a general tree
   tree = tree_generator(graph[1][1:-2])
 
-  alpha = -sys.maxsize - 1
-  beta = sys.maxsize
+  alpha = -math.inf
+  beta = math.inf
   node = list(tree.keys())[0]
   nodes_searched = 0
-  temp = alpha_beta_pruning(tree, node_info,alpha,beta, node, nodes_searched)
+  temp = alpha_beta_pruning(tree, node_info,alpha,beta, node)
   print("----")
   return "Graph "+ str(graph_number+ 1) + ": Score: " + str(temp) + "; Leaf Nodes Examined: " +  str(nodes_searched)
 
