@@ -24,82 +24,44 @@ def tree_generator(tree_info):
   tree = dict((k, tuple(v)) for k, v in d1.items())
   return tree
 
-# ----------children----------- #
-# Parameter: 
-# - tree: A multi-value dictionary containing info about each node's children
-# - token: the node for which we want the children
-# Creates a general tree to run alpha-beta pruning on.
-# Returns: A list of all children with the token ordered by depth-right frst
-# ----------------------------------- #
-def children(token, tree):
-    child_list = []
-    to_crawl = deque([token])
-    while to_crawl:
-        current = to_crawl.popleft()
-        child_list.append(current)
-        try:
-          node_children = tree[current]
-        except KeyError:
-          continue
-        to_crawl.extend(node_children)
-    return child_list
-
-
 # ----------alpha_beta_pruning----------- #
 # Parameter: 
 # - tree: A multi-value dictionary containing info about's each node's children
 # - node_info: Whether Each node is MIN or MAX
 # Creates a general tree to run alpha-beta pruning on.
 # Returns: Score and number of nodes visited
-# ***Known issue***
-# ALPHA_BETA_PRUNING NOT ITERATING TREE
 # ----------------------------------- #
 def alpha_beta_pruning(tree, node_info, alpha, beta,node,nodes_searched ):
-  not_leaves = 0
-  if(node in node_info):
-    if (node_info[node] == "MAX"):
-      tree_node_len = len(tree[node])
-      for i in range(tree_node_len):
-        print(tree[node][i])
-        temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )
-        if (temp is None and alpha == -sys.maxsize - 1):
-          return alpha
-        else:
-          alpha = max(alpha,temp )
 
-          # Alpha Beta Pruning
-          if (alpha <= beta ):
-            return alpha
-          else:
-              i = tree_node_len
-              break
-    if (node_info[node] == "MIN"): #USELESS
-        tree_node_len = len(tree[node])
-        for i in range(tree_node_len):
-          temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched )
-          if (temp is None and beta == sys.maxsize):
-            return beta
-          else:
-            beta = min(beta,temp)
+  # Starting criteria of node is the root node.
+  if (node == list(tree.keys())[0]):
+    alpha = -sys.maxsize - 1
+    beta = sys.maxsize
 
-            # Alpha Beta Pruning
-            if (alpha <= beta ):
-              return beta
-            else:
-              i = tree_node_len
-              break
+  if (node in node_info):
+    tree_node_len = len(tree[node])
+    for i in range(tree_node_len):
+      temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i],nodes_searched)
+
+      if (node_info[node] == "MAX"):
+        if (temp is None):
+          temp = -sys.maxsize - 1
+        alpha = max(alpha,temp)
+        if (alpha >= beta):
+          break
+        return alpha
+
+      if (node_info[node] == "MIN"):
+        if (temp is None):
+          temp = sys.maxsize
+        beta = min(beta,temp)
+        if (beta <= alpha):
+          break
+        return beta
+
+  # If the leaves node, return the value
   else:
-    for key, val in tree.items():
-
-    #if (node_info[node] == "MIN"):
-      if (beta > int(node)):
-        beta = int(node)
-      return beta
-    #elif (node_info[node] == "MAX"):
-    if (alpha < int(node)):
-      alpha = int(node)
-
-
+    return int(node)
 
 def graph_solution(graph, graph_number):
 
@@ -117,7 +79,7 @@ def graph_solution(graph, graph_number):
   node = list(tree.keys())[0]
   nodes_searched = 0
   temp = alpha_beta_pruning(tree, node_info,alpha,beta, node, nodes_searched)
-
+  print("----")
   return "Graph "+ str(graph_number+ 1) + ": Score: " + str(temp) + "; Leaf Nodes Examined: " +  str(nodes_searched)
 
 def main():
@@ -135,8 +97,6 @@ def main():
   if os.path.exists("alphabeta_out.txt"):
     os.remove("alphabeta_out.txt")
   output_file= open("alphabeta_out.txt","a+")
-
-
 
   for graph in graphs:
     output_file.write(graph_solution(graph, graphs.index(graph)) + "\n")
