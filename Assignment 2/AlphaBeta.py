@@ -7,6 +7,8 @@ nodeList = []
 connectionList = []
 minNodes = []
 maxNodes = []
+
+# reset all important variables for new input
 def reset():
     global examined_count
     global nodeList
@@ -43,12 +45,14 @@ def buildTree(input):
     global minNodes
     global maxNodes
 
+    # iterate threw node List and assign objects to List
     for minMax in nodeList:
         if minMax[1] == "MAX":
             maxNodes.append(minMax[0])
         else:
             minNodes.append(minMax[0])
 
+# check if node is a leaf by type casting to int, if possible return true, else false
 def is_leaf(node):
     try:
         int(node)
@@ -77,9 +81,10 @@ def alpha_beta(current_node, alpha, beta):
 
     if is_leaf(current_node):
         examined_count = examined_count+1
-        return int(current_node)
+        return int(current_node) 
 
     if is_max_node(current_node):
+        # iterate threw connectionList to go threw the tree and update beta and alpha
         for node in connectionList:
             if node[0] == current_node: # that means child node is node[1]
                 alpha = max(alpha, alpha_beta(node[1], alpha, beta))
@@ -90,6 +95,7 @@ def alpha_beta(current_node, alpha, beta):
 
     if is_min_node(current_node):
         for node in connectionList:
+             # iterate threw connectionList to go threw the tree and update beta and alpha
             if node[0] == current_node:  # that means child node is node[1]
                 beta = min(beta, alpha_beta(node[1], alpha, beta))
                 if beta <= alpha:  # Cut off the rest of the child
