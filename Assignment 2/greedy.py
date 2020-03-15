@@ -231,7 +231,7 @@ def main():
     fileList = ["pathfinding_a_out.txt", "pathfinding_b_out.txt"]
     for f in fileList:
         try:
-            file = open(f, 'w')
+            file = open(f, 'a')
         except IOError:
             print("Cannot open " + f)
         else:

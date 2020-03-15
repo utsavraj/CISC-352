@@ -9,3 +9,14 @@ X_______PX
 X___GPPPPX
 XXXXXXXXXX
 
+Greedy
+XXXXXXXXXX
+XPPPPS___X
+XPX____X_X
+XPX____X_X
+XPX____X_X
+XPXXXXXX_X
+XPPPP____X
+X___G____X
+XXXXXXXXXX
+
