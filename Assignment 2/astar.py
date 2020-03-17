@@ -66,10 +66,8 @@ class Maze: #Creates a Maze which is stored as a 2D Array
             neigh.append(Position(x, y+1, came_from=pos))
         return neigh
 
-    def astarDiag(self):
-        '''
-        Seems to be okay, but pathing seems to be illogical sometimes
-        '''
+    def astarDiag(self):#finds he most optimal path, such that an agent can move diagonally on a maze
+
         frontier = []
         start = self.start
         start.cost_so_far = 0
