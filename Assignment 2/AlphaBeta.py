@@ -29,6 +29,8 @@ def buildTree(input):
     inputSplit = input.split(" ")    # split input into MIN/MAX definitions and connection definitions
     nodes = inputSplit[0][2:-2].split("),(")    # node definition (name and min or max)
     connections = inputSplit[1][2:-2].split("),(")  # define connections
+    
+    connections = [cn.replace(')', '') for cn in connections] # because ")" is not removed for the last leaf in the split
 
     # create list of nodes
     global nodeList
