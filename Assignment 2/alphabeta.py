@@ -1,107 +1,126 @@
-#### Python 3
-# -----------LIBRARY----------- #
-import os
-from collections import defaultdict
+# libraries
 import math
-# ----------------------------- #
+import os
 
+examined_count = 0
+nodeList = []
+connectionList = []
+minNodes = []
+maxNodes = []
 
-# ----------tree_generator----------- #
-# Parameter: Tree information from the graph about children, root, leaves nodes
-# Creates a general tree to run alpha-beta pruning on.
-# Returns: General Tree
-# ----------------------------------- #
-def tree_generator(tree_info):
-  tree_info= tree_info.replace('(','').replace('),','#').replace(',',':').replace('#',',').split(',')
-  tree_info= list(item.split(":") for item in tree_info)
+# reset all important variables for new input
+def reset():
+    global examined_count
+    global nodeList
+    global connectionList
+    global minNodes
+    global maxNodes
+    examined_count = 0
+    nodeList = []
+    connectionList = []
+    minNodes = []
+    maxNodes = []
 
-  # intilise
-  d1 = defaultdict(list)
+# transforms input file to tree
+def buildTree(input):
+    # reset variables
+    reset()
+    # save different parts of file in different variables
+    inputSplit = input.split(" ")    # split input into MIN/MAX definitions and connection definitions
+    nodes = inputSplit[0][2:-2].split("),(")    # node definition (name and min or max)
+    connections = inputSplit[1][2:-2].split("),(")  # define connections
+    
+    connections = [cn.replace(')', '') for cn in connections] # because ")" is not removed for the last leaf in the split
 
-  for k, v in tree_info:
-      d1[k].append(v)
-  
-  tree = dict((k, tuple(v)) for k, v in d1.items())
-  return tree
+    # create list of nodes
+    global nodeList
 
-# ----------alpha_beta_pruning----------- #
-# Parameter: 
-# - tree: A multi-value dictionary containing info about's each node's children
-# - node_info: Whether Each node is MIN or MAX
-# Creates a general tree to run alpha-beta pruning on.
-# Returns: Score and number of nodes visited
-# ----------------------------------- #
-def alpha_beta_pruning(tree, node_info, alpha, beta,node):
+    for i in range(len(nodes)):
+        nodeList.append(nodes[i].split(","))
 
-  print(node)
+    # create list of connections
+    global connectionList
+    for i in range(len(connections)):
+        connectionList.append(connections[i].split(","))
 
-  if (node in node_info):
-    tree_node_len = len(tree[node])
-    for i in range(tree_node_len):
-      temp = alpha_beta_pruning(tree, node_info, alpha, beta,tree[node][i])
+    # create 2 lists,for MIN node elements and for MAX node elements
+    global minNodes
+    global maxNodes
 
-      if (node_info[node] == "MAX"):
-        if (temp is None):
-          continue
+    # iterate threw node List and assign objects to List
+    for minMax in nodeList:
+        if minMax[1] == "MAX":
+            maxNodes.append(minMax[0])
         else:
-          alpha = max(alpha,temp)
-          if (alpha >= beta):
-            return alpha
-        #print(alpha)
-            
+            minNodes.append(minMax[0])
 
-      if (node_info[node] == "MIN"):
-        if (temp is None):
-          continue
-        else:
-          beta = min(beta,temp)
-          if (beta <= alpha):
-            return beta
-        #print(beta)
-              
+# check if node is a leaf by type casting to int, if possible return true, else false
+def is_leaf(node):
+    try:
+        int(node)
+        return True
 
-  # If the leaves node, return the value
-  else:
-    return int(node)
+    except ValueError:
+        return False
 
-def graph_solution(graph, graph_number):
+def is_max_node(node):
+    if node[0] in maxNodes:
+        return True
+    else:
+        return False
 
-  graph = graph.split()
 
-  # Converts min-max info about each node into a dictionary
-  # Works as nodes can only be letters - not characters
-  node_info = dict(item.replace('(','').split(",") for item in graph[0][1:-2].split("),"))
+def is_min_node(node):
+    if node[0] in minNodes:
+        return True
+    else:
+        return False
 
-  #Creating a general tree
-  tree = tree_generator(graph[1][1:-2])
 
-  alpha = -math.inf
-  beta = math.inf
-  node = list(tree.keys())[0]
-  nodes_searched = 0
-  temp = alpha_beta_pruning(tree, node_info,alpha,beta, node)
-  print("----")
-  return "Graph "+ str(graph_number+ 1) + ": Score: " + str(temp) + "; Leaf Nodes Examined: " +  str(nodes_searched)
+# implement given alpha_beta algorithm
+def alpha_beta(current_node, alpha, beta):
+    global examined_count
+
+    if is_leaf(current_node):
+        examined_count = examined_count+1
+        return int(current_node) 
+
+    if is_max_node(current_node):
+        # iterate threw connectionList to go threw the tree and update beta and alpha
+        for node in connectionList:
+            if node[0] == current_node: # that means child node is node[1]
+                alpha = max(alpha, alpha_beta(node[1], alpha, beta))
+                if alpha >= beta:  # Cut off the rest of the child
+                    return alpha
+        return alpha
+
+
+    if is_min_node(current_node):
+        for node in connectionList:
+             # iterate threw connectionList to go threw the tree and update beta and alpha
+            if node[0] == current_node:  # that means child node is node[1]
+                beta = min(beta, alpha_beta(node[1], alpha, beta))
+                if beta <= alpha:  # Cut off the rest of the child
+                    return beta
+        return beta
 
 def main():
 
-  #Reads the input file stores the data in variable named graphs
-  input_file = open("alphabeta.txt", "r")
+    # read input
+    with open("alphabeta.txt","r") as f:
+        inputs = f.readlines()
 
-  #To ignore blank line
-  graphs = (graph.rstrip() for graph in input_file)
-  graphs = list(graph for graph in graphs if graph)
+        # Removes any existing output file and creates a new one
+    if os.path.exists("alphabeta_out.txt"):
+        os.remove("alphabeta_out.txt")
+    output_file = open("alphabeta_out.txt", "a+")
 
-  input_file.close()
-
-  # Removes any existing output file and creates a new one
-  if os.path.exists("alphabeta_out.txt"):
-    os.remove("alphabeta_out.txt")
-  output_file= open("alphabeta_out.txt","a+")
-
-  for graph in graphs:
-    output_file.write(graph_solution(graph, graphs.index(graph)) + "\n")
-
-  output_file.close()
-
+    for input in inputs:
+        buildTree(input) # build the tree out of input file
+        score = alpha_beta(connectionList[0][0], -math.inf, math.inf) # start algorithm with start configuration
+        solution = "Graph: " + str(inputs.index(input)+1) + "; Score: " + str(score) + "; Leaf Nodes Examined: " + str(examined_count)
+        print("##############################################")
+        print(solution)
+        print("##############################################\n")
+        output_file.write(solution + "\n")
 main()
